@@ -2,7 +2,7 @@
 
 [Apri la pagina](https://dennisresponsa.github.io/noroc-am4/)
 
-Interfaccia web in italiano e API funzionante costruite sul **motore Rust originale di AM4Help**, con database originale incluso. Non riscrive le formule. Binario pronto per questo Mac Apple Silicon; codice sorgente incluso per ricompilarlo su altri sistemi.
+Interfaccia web in italiano e API funzionante costruite sul **motore Rust originale di AM4Help**, con database originale incluso. Non riscrive le formule. Nella consegna locale è incluso il binario per Mac Apple Silicon. Da GitHub compilare con `cargo build --release`, poi copiare `target/release/noroc-am4-api` in `bin/` per usare `run.sh`.
 
 Avvio dal terminale nella cartella:
 
