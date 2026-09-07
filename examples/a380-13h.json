@@ -1,0 +1,13 @@
+{
+  "aircraft": "a388",
+  "origin": "VCE",
+  "mode": "realism",
+  "max_hours": 13,
+  "trips_per_day": 2,
+  "aircraft_per_route": 1,
+  "allow_invalid_tpd": true,
+  "align_max_time": true,
+  "cadence_hours": 13,
+  "sort": "profit_per_trip",
+  "limit": 20
+}
