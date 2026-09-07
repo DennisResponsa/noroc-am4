@@ -9,7 +9,7 @@ const native=await fetch('http://127.0.0.1:8765/search',{method:'POST',body:JSON
 assert.equal(web.matches,native.matches);
 assert.deepEqual(web.routes.map(r=>[r.destination.iata,r.ci,r.configuration,r.tickets]),native.routes.map(r=>[r.destination.iata,r.ci,r.configuration,r.tickets]));
 for(let i=0;i<web.routes.length;i++)assert.ok(Math.abs(web.routes[i].profit_per_trip-native.routes[i].profit_per_trip)<2);
-const script=fs.readFileSync(new URL('./web/index.html',import.meta.url),'utf8').match(/<script>([\s\S]+)<\/script>/)[1];
+const script=fs.readFileSync(new URL('./web/index.html',import.meta.url),'utf8').match(/<script>([\s\S]+?)<\/script>/)[1];
 new vm.Script(script);
 const iso=(t,tz)=>new Intl.DateTimeFormat('sv-SE',{timeZone:tz,dateStyle:'short',timeStyle:'short'}).format(new Date(t));
 assert.equal(iso('2026-09-07T22:00Z','Europe/Chisinau'),'2026-09-08 01:00');
@@ -19,6 +19,8 @@ assert.equal(fleet.length,475);assert.ok(fleet.every(r=>r.tickets));
 console.log('OK: parità motore web/API, sintassi pagina, fuso estivo/invernale e 475 tariffe.');
 const elements=new Map();const defaults={hub:'VCE',aircraft:'a388',sort:'profit_per_trip',hours:'13',engine:'0',fuel:'340',co2:'125',load:'99',count:'1',large:'6',heavy:'6',timezone:'Europe/Chisinau','max-fuel':'420','max-co2':'115'};
 const el=id=>{if(!elements.has(id))elements.set(id,{value:defaults[id]||'',checked:id==='exclude',innerHTML:'',textContent:'',setAttribute(){}});return elements.get(id)};
-const sandbox={document:{getElementById:el},Intl,Date,Number,String,Math,JSON,Error,Promise,location:{hostname:'127.0.0.1'},fetch:async(url,opts)=>{if(url==='./fleet.json')return{ok:true,json:async()=>fleet};if(url==='./prices.json')return{ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('./web/prices.json',import.meta.url)))};return fetch('http://127.0.0.1:8765'+url,opts)}};
-vm.createContext(sandbox);vm.runInContext(script,sandbox);await new Promise(r=>setTimeout(r,10));
+const sandbox={document:{getElementById:el},Intl,Date,Number,String,Math,JSON,Error,Promise,location:{hostname:'127.0.0.1'},fetch:async(url,opts)=>{if(url==='./fleet.json')return{ok:true,json:async()=>fleet};if(url==='./replacement-plan.json')return{ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('./web/replacement-plan.json',import.meta.url)))};if(url==='./prices.json')return{ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('./web/prices.json',import.meta.url)))};return fetch('http://127.0.0.1:8765'+url,opts)}};
+vm.createContext(sandbox);vm.runInContext(script,sandbox);vm.runInContext(fs.readFileSync(new URL('./web/plan.js',import.meta.url),'utf8'),sandbox);await new Promise(r=>setTimeout(r,10));
 assert.ok(el('inventory').innerHTML.includes('Economy $'));el('price-date').value='2026-09-07';vm.runInContext('renderPrices()',sandbox);assert.ok(el('price-status').textContent.includes('GMT+3'));assert.ok(el('price-table').innerHTML.includes('21:30'));await vm.runInContext('search()',sandbox);assert.ok(el('result-content').innerHTML.includes('Prezzi da inserire'));assert.ok(el('result-content').innerHTML.includes('Interventi sull’aereo'));assert.ok(!el('status').textContent.includes('Impossibile'));console.log('OK: flusso pagina, tariffe visibili, orari locali e consigli modifiche.');
+
+assert.ok(el('plan').innerHTML.includes('Sostituzioni consigliate'));assert.ok(el('plan').innerHTML.includes('EZE'));assert.ok(el('plan').innerHTML.includes('VCE'));console.log('OK: piano già visibile e sostituzione VCE caricata.');

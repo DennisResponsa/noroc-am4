@@ -123,6 +123,10 @@ fn run() -> Result<(),String> {
    let response=Response::from_string(body).with_header(Header::from_bytes("Content-Type",mime).unwrap()).with_header(Header::from_bytes("Cache-Control","no-store").unwrap());
    let _=request.respond(response);continue;
   }
+  if method=="GET" && (path=="/replacement-plan.json" || path=="/plan.js") {
+   let (body,mime)=if path=="/plan.js" {(include_str!("../web/plan.js"),"text/javascript; charset=utf-8")} else {(include_str!("../web/replacement-plan.json"),"application/json; charset=utf-8")};
+   let _=request.respond(Response::from_string(body).with_header(Header::from_bytes("Content-Type",mime).unwrap()).with_header(Header::from_bytes("Cache-Control","no-store").unwrap()));continue;
+  }
   // Loopback only; reject requests originating from arbitrary web pages.
   let bad_origin=request.headers().iter().any(|h| h.field.equiv("Origin") && ![format!("http://127.0.0.1:{port}"),format!("http://localhost:{port}")].contains(&h.value.as_str().to_string()));
   let mut body=String::new();

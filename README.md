@@ -83,3 +83,10 @@ La selezione della data è in ora locale. `Intl.DateTimeFormat` con `Europe/Chis
 Le alternative indicano se l'upgrade velocità è necessario per rispettare il limite con il motore selezionato. Il risparmio di fuel/CO₂ è stimato al 10% del rispettivo costo con le altre condizioni costanti. Non implica un tempo di recupero già verificato: costo dell'upgrade e modifiche possedute devono essere letti dal gioco. I consigli non modificano la flotta.
 
 Verifiche: `python3 tests.py` e, con Node e API locale attiva, `node test-web.mjs`. La seconda controlla la parità del motore WebAssembly con quello nativo, le tariffe dell'inventario e i cambi di data in estate/inverno.
+
+
+## Piano di sostituzione già calcolato
+
+La scheda “Cosa sostituire” si apre per prima e contiene le raccomandazioni per hub e modello: 59 cambi, di cui 43 A380 passeggeri, 15 cargo e un A330. Il piano è una fotografia indipendente dai parametri della ricerca manuale. La metodologia, tutti gli scenari e le assegnazioni sono in `web/replacement-plan.json`; il resoconto leggibile è `PIANO_SOSTITUZIONI.md`.
+
+Rigenerazione con API locale attiva: `python3 planning/build_plan.py`. Verifica: `python3 planning/test_plan.py`. Non usare la mancanza di un risultato come profitto zero. Il piano include anche i casi non sostituiti e quelli da verificare.
